@@ -1,12 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
+from rest_framework import status
 from rest_framework.response import Response
 from .models import Alumno, Sesion, Desempeno, Historias, SabiasQue
 from .serializers import AlumnoSerializer, SesionSerializer, DesempenoSerializer, HistoriasSerializer, SabiasQueSerializer
 
-
-
-# Create your views here.
 
 class Alumnos(APIView):
 
@@ -58,7 +56,7 @@ class Desempenos(APIView):
 
 
 
-class Historias(APIView):
+class Histories(APIView):
 
 
 	def get(self, request):
@@ -76,8 +74,7 @@ class Historias(APIView):
 
 
 
-class SabiasQue(APIView):
-
+class Sabiasque(APIView):
 
 	def get(self, request):
 		listaSabiasQue=SabiasQue.objects.all()
