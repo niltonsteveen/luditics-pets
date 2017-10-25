@@ -21,6 +21,15 @@ class Alumnos(APIView):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
+	def put(self, request, format=None):
+		alumno=Alumno.objects.get(id=request.data['id'])
+		serializer=AlumnoSerializer(alumno, data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+
 
 class Sesiones(APIView):
 
@@ -37,6 +46,14 @@ class Sesiones(APIView):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
+	def put(self, request, format=None):
+		sesion=Sesion.objects.get(fechaInicio=request.data['fechaInicio'])
+		serializer=SesionSerializer(sesion, data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
 
 class Desempenos(APIView):
@@ -51,6 +68,15 @@ class Desempenos(APIView):
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+
+	def put(self, request, format=None):
+		des=Desempeno.objects.get(id=request.data['id'])
+		serializer=DesempenoSerializer(des, data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
@@ -72,6 +98,15 @@ class Histories(APIView):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
+	def put(self, request, format=None):
+		historia=Historias.objects.get(id=request.data['id'])
+		serializer=HistoriasSerializer(historia, data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+
 
 
 class Sabiasque(APIView):
@@ -86,5 +121,14 @@ class Sabiasque(APIView):
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+
+	def put(self, request, format=None):
+		sabiasque=SabiasQue.objects.get(id=request.data['id'])
+		serializer=SabiasQueSerializer(sabiasque, data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)

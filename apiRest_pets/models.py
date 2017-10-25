@@ -5,10 +5,10 @@ from django.db import models
 class SabiasQue(models.Model):
 	id=models.AutoField(primary_key=True)
 	texto=models.CharField(max_length=400)
-	habilitado=models.BooleanField(default=-True)
+	habilitado=models.BooleanField(default=True)
 	"""docstring for ClassName"""
 	def __str__(self):
-		return self.id
+		return self.texto
 
 
 
@@ -17,9 +17,10 @@ class Historias(models.Model):
 	texto=models.CharField(max_length=400)
 	tipoMascota=models.CharField(max_length=5)
 	habilitado=models.BooleanField(default=True)
+	tipoOperacion=models.IntegerField(blank=False)
 
 	def __str__(self):
-		return self.id
+		return self.texto
 
 
 
@@ -28,7 +29,7 @@ class Desempeno(models.Model):
 	numeroAciertos=models.IntegerField()
 	numeroFallos=models.IntegerField()
 	nivel=models.IntegerField()
-	tipoOperacion=models.CharField(max_length=5)
+	tipoOperacion=models.IntegerField(blank=False)
 	idAlumno=models.ForeignKey('Alumno',on_delete=models.CASCADE)
 	idSesion=models.ForeignKey('Sesion',on_delete=models.CASCADE)
 	fechaReporte=models.DateTimeField(auto_now_add=True)
@@ -48,7 +49,7 @@ class Sesion(models.Model):
 
 
 class Alumno(models.Model):
-	id=models.IntegerField(primary_key=True)
+	id=models.AutoField(primary_key=True)
 	nombreCompleto=models.CharField(max_length=30)
 	grupo=models.CharField(max_length=5)
 

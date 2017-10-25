@@ -30,7 +30,7 @@ class HistoriasSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model=Historias
-		fields=('id', 'texto', 'tipoMascota', 'habilitado')
+		fields=('id', 'texto', 'tipoMascota', 'habilitado','tipoOperacion')
 
 
 class SabiasQueSerializer(serializers.ModelSerializer):
