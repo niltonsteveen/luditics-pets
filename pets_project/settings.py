@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'juego',
         'USER': 'developer',
         'PASSWORD': 'Developer08*',
-        'HOST': 'localhost',
+        'HOST': 'dukeduster.eastus.cloudapp.azure.com',
         'PORT': '3306',
 
     }
@@ -125,3 +125,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+ALLOWED_HOSTS = ['luditics.eastus.cloudapp.azure.com', 'localhost', '127.0.0.1']
