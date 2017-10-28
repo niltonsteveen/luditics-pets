@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^desempenos/', views.Desempenos.as_view()),
     url(r'^historias/', views.Histories.as_view()),
     url(r'^sabiasQue/', views.Sabiasque.as_view()),
+    url(r'^buscaAlumno/', views.buscaAlumno.as_view()),
 ]
