@@ -139,8 +139,21 @@ class buscaAlumno(APIView):
 	def post(self, request):
 		data=request.data
 		nombreCompleto=data['nombreCompleto']
-		alumno=Alumno.objects.filter(nombreCompleto=nombreCompleto)
-		print(alumno)		
-		serializer=AlumnoSerializer(alumno[0])
-		return Response(serializer.data)
+		alumno=Alumno.objects.filter(nombreCompleto=nombreCompleto)	
+		print(alumno)
+		if not alumno:
+			return Response(data={"existe":False})
+		else:			
+			serializer=AlumnoSerializer(alumno[0])
+			respuesta={
+				"nombreCompleto":serializer.data['nombreCompleto'],
+				"id":serializer.data['id'],
+				"grupo":serializer.data['grupo'],
+				"existe":True
+			}
+			return Response(respuesta)
 
+
+"""{
+  "nombreCompleto":"NILTON STEVEEN VELEZ GARCIA"
+}"""
