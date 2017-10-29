@@ -136,12 +136,11 @@ class Sabiasque(APIView):
 
 class buscaAlumno(APIView):
 
-	def post(self, request, format=None):
-		alumno=Alumno.objects.get(nombreCompleto=request.data['nombreCompleto'])
-		serializer=AlumnoSerializer(alumno, data=request.data)
-		if serializer.is_valid():
-			return Response(serializer.data)
-		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
-
+	def post(self, request):
+		data=request.data
+		nombreCompleto=data['nombreCompleto']
+		alumno=Alumno.objects.filter(nombreCompleto=nombreCompleto)
+		print(alumno)		
+		serializer=AlumnoSerializer(alumno[0])
+		return Response(serializer.data)
 
