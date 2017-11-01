@@ -40,7 +40,8 @@ class Desempeno(models.Model):
 
 
 class Sesion(models.Model):
-	fechaInicio=models.DateTimeField(auto_now_add=True,primary_key=True)
+	idSesion=models.AutoField(primary_key=True)
+	fechaInicio=models.DateTimeField(auto_now_add=True)
 	idAlumno=models.ForeignKey('Alumno',on_delete=models.CASCADE)
 
 	def __str__(self):
@@ -55,4 +56,3 @@ class Alumno(models.Model):
 
 	def __str__(self):
 		return self.nombreCompleto
-

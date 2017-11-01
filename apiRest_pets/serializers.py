@@ -16,7 +16,7 @@ class SesionSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model=Sesion
-		fields=('fechaInicio', 'idAlumno')
+		fields=('idSesion', 'fechaInicio', 'idAlumno')
 
 
 class DesempenoSerializer(serializers.ModelSerializer):

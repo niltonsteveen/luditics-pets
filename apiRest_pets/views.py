@@ -136,14 +136,13 @@ class Sabiasque(APIView):
 
 class buscaAlumno(APIView):
 
-	def post(self, request):
-		data=request.data
-		nombreCompleto=data['nombreCompleto']
-		alumno=Alumno.objects.filter(nombreCompleto=nombreCompleto)	
-		print(alumno)
+	def get(self, request):
+		username = request.GET.get('username','default')
+		nombreCompleto=username
+		alumno=Alumno.objects.filter(nombreCompleto=nombreCompleto)
 		if not alumno:
 			return Response(data={"existe":False})
-		else:			
+		else:
 			serializer=AlumnoSerializer(alumno[0])
 			respuesta={
 				"nombreCompleto":serializer.data['nombreCompleto'],
@@ -152,6 +151,52 @@ class buscaAlumno(APIView):
 				"existe":True
 			}
 			return Response(respuesta)
+
+class barras(APIView):
+
+	def post(self, request):
+		data=request.data
+		nombreEstudiante=data['estudiante']
+		grupo=data['grupo']
+		estudiante=Alumno.objects.get(nombreCompleto=nombreEstudiante , grupo=grupo)
+		grupo=estudiante.grupo
+		idEstudiante=estudiante.id
+		fechaInicio=data['fechaInicio']
+		fechaFin=data['fechaFin']
+		query=Desempeno.objects.values('tipoOperacion', 'nivel').annotate(aciertos=Sum('numeroAciertos'), fallos=Sum('numeroFallos'))\
+		.filter(idAlumno=idEstudiante)
+		return Response(query)
+
+class lineas(APIView):
+
+	def post(self, request):
+		data=request.data
+		nombreEstudiante=data['estudiante']
+		grupo=data['grupo']
+		estudiante=Alumno.objects.get(nombreCompleto=nombreEstudiante , grupo=grupo)
+		grupo=estudiante.grupo
+		idEstudiante=estudiante.id
+		fechaInicio=data['fechaInicio']
+		fechaFin=data['fechaFin']
+		sesion=Sesion.objects.get(fechaInicio=fechaInicio , idAlumno=idEstudiante)
+		idSesion=sesion.fechaInicio
+
+
+		query=Desempeno.objects.values('idSesion').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
+		.filter(idAlumno=idEstudiante, idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
+
+		return Response(query)
+
+class getEstudiantesPorGrupo(APIView):
+	def get(self, request):
+		grupo = request.GET.get('grupo','default')
+		alumnos=Alumno.objects.filter(grupo=grupo)
+		if not alumnos:
+			return Response(data={"msg":"no hay alumnos en ese grupo"})
+		else:
+			serializer=AlumnoSerializer(alumnos, many=True)
+			return Response(serializer.data)
+
 
 
 """{

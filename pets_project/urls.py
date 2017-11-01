@@ -24,5 +24,8 @@ urlpatterns = [
     url(r'^desempenos/', views.Desempenos.as_view()),
     url(r'^historias/', views.Histories.as_view()),
     url(r'^sabiasQue/', views.Sabiasque.as_view()),
-    url(r'^buscaAlumno/', views.buscaAlumno.as_view()),
+    url(r'^buscaAlumno/$', views.buscaAlumno.as_view()),
+    url(r'^getEstudiantesPorGrupo/$', views.getEstudiantesPorGrupo.as_view()),
+    url(r'^barras/', views.barras.as_view()),
+    url(r'^lineas/', views.lineas.as_view()),
 ]
