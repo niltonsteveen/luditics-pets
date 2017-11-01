@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from .models import Alumno, Sesion, Desempeno, Historias, SabiasQue
 from .serializers import AlumnoSerializer, SesionSerializer, DesempenoSerializer, HistoriasSerializer, SabiasQueSerializer
-
+from django.db.models import Sum, Count, Max, Min
 
 class Alumnos(APIView):
 
@@ -179,7 +179,7 @@ class lineas(APIView):
 		idEstudiante=estudiante.id
 		fechaInicio=data['fechaInicio']
 		fechaFin=data['fechaFin']
-		
+
 
 
 		query=Desempeno.objects.values('idSesion').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
@@ -205,7 +205,7 @@ class lineasMax(APIView):
 		ids=[idEstudiante1,idEstudiante2,idEstudiante3]
 		fechaInicio=data['fechaInicio']
 		fechaFin=data['fechaFin']
-		
+
 
 		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion').annotate(maxNivel=Max('nivel'))\
 		.filter(idAlumno__in=ids, idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
@@ -221,7 +221,7 @@ class cuenta(APIView):
 		estudiantes=Alumno.objects.filter(grupo=grupo)
 		fechaInicio=data['fechaInicio']
 		fechaFin=data['fechaFin']
-		
+
 
 		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion').annotate(maxNivel=Max('nivel'))\
 		.filter( idAlumno__in=estudiantes,idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
