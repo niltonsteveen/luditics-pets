@@ -28,4 +28,6 @@ urlpatterns = [
     url(r'^getEstudiantesPorGrupo/$', views.getEstudiantesPorGrupo.as_view()),
     url(r'^barras/', views.barras.as_view()),
     url(r'^lineas/', views.lineas.as_view()),
+    url(r'^lineasMax/', views.lineasMax.as_view()),
+    url(r'^cuenta/', views.cuenta.as_view()),
 ]

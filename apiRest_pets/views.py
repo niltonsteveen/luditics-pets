@@ -164,8 +164,9 @@ class barras(APIView):
 		fechaInicio=data['fechaInicio']
 		fechaFin=data['fechaFin']
 		query=Desempeno.objects.values('tipoOperacion', 'nivel').annotate(aciertos=Sum('numeroAciertos'), fallos=Sum('numeroFallos'))\
-		.filter(idAlumno=idEstudiante)
+		.filter(idAlumno=idEstudiante, fechaReporte__gte=fechaInicio, fechaReporte__lte=fechaFin)
 		return Response(query)
+
 
 class lineas(APIView):
 
@@ -178,14 +179,56 @@ class lineas(APIView):
 		idEstudiante=estudiante.id
 		fechaInicio=data['fechaInicio']
 		fechaFin=data['fechaFin']
-		sesion=Sesion.objects.get(fechaInicio=fechaInicio , idAlumno=idEstudiante)
-		idSesion=sesion.fechaInicio
+		
 
 
 		query=Desempeno.objects.values('idSesion').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
 		.filter(idAlumno=idEstudiante, idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
 
 		return Response(query)
+
+
+class lineasMax(APIView):
+
+	def post(self, request):
+		data=request.data
+		nombreEstudiante1=data['estudiante1']
+		nombreEstudiante2=data['estudiante2']
+		nombreEstudiante3=data['estudiante3']
+		grupo=data['grupo']
+		estudiante1=Alumno.objects.get(nombreCompleto=nombreEstudiante1 , grupo=grupo)
+		idEstudiante1=estudiante1.id
+		estudiante2=Alumno.objects.get(nombreCompleto=nombreEstudiante2 , grupo=grupo)
+		idEstudiante2=estudiante2.id
+		estudiante3=Alumno.objects.get(nombreCompleto=nombreEstudiante3 , grupo=grupo)
+		idEstudiante3=estudiante3.id
+		ids=[idEstudiante1,idEstudiante2,idEstudiante3]
+		fechaInicio=data['fechaInicio']
+		fechaFin=data['fechaFin']
+		
+
+		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion').annotate(maxNivel=Max('nivel'))\
+		.filter(idAlumno__in=ids, idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
+
+		return Response(query)
+
+
+class cuenta(APIView):
+
+	def post(self, request):
+		data=request.data
+		grupo=data['grupo']
+		estudiantes=Alumno.objects.filter(grupo=grupo)
+		fechaInicio=data['fechaInicio']
+		fechaFin=data['fechaFin']
+		
+
+		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion').annotate(maxNivel=Max('nivel'))\
+		.filter( idAlumno__in=estudiantes,idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
+
+		response=query.values('tipoOperacion','nivel').annotate(cuenta=Count('idAlumno'))
+
+		return Response(response)
 
 class getEstudiantesPorGrupo(APIView):
 	def get(self, request):
