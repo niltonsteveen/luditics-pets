@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from .models import Alumno, Sesion, Desempeno, Historias, SabiasQue
 from .serializers import AlumnoSerializer, SesionSerializer, DesempenoSerializer, HistoriasSerializer, SabiasQueSerializer
+from django.db.models import Sum, Count, Max, Min
 
 
 class Alumnos(APIView):
@@ -157,3 +158,116 @@ class buscaAlumno(APIView):
 """{
   "nombreCompleto":"NILTON STEVEEN VELEZ GARCIA"
 }"""
+
+
+class barras(APIView):
+
+	def post(self, request):
+		data=request.data
+		nombreEstudiante=data['estudiante']
+		grupo=data['grupo']
+		estudiante=Alumno.objects.get(nombreCompleto=nombreEstudiante , grupo=grupo)
+		grupo=estudiante.grupo
+		idEstudiante=estudiante.id
+		fechaInicio=data['fechaInicio']
+		fechaFin=data['fechaFin']
+		query=Desempeno.objects.values('tipoOperacion', 'nivel').annotate(aciertos=Sum('numeroAciertos'), fallos=Sum('numeroFallos'))\
+		.filter(idAlumno=idEstudiante, fechaReporte__gte=fechaInicio, fechaReporte__lte=fechaFin)
+		return Response(query)
+
+
+class lineas(APIView):
+
+	def post(self, request):
+		data=request.data
+		nombreEstudiante=data['estudiante']
+		grupo=data['grupo']
+		estudiante=Alumno.objects.get(nombreCompleto=nombreEstudiante , grupo=grupo)
+		grupo=estudiante.grupo
+		idEstudiante=estudiante.id
+		fechaInicio=data['fechaInicio']
+		fechaFin=data['fechaFin']
+		
+
+
+		query=Desempeno.objects.values('idSesion').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
+		.filter(idAlumno=idEstudiante, idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
+
+		return Response(query)
+
+
+class lineasMax(APIView):
+
+	def post(self, request):
+		data=request.data
+		nombreEstudiante1=data['estudiante1']
+		nombreEstudiante2=data['estudiante2']
+		nombreEstudiante3=data['estudiante3']
+		grupo=data['grupo']
+		estudiante1=Alumno.objects.get(nombreCompleto=nombreEstudiante1 , grupo=grupo)
+		idEstudiante1=estudiante1.id
+		estudiante2=Alumno.objects.get(nombreCompleto=nombreEstudiante2 , grupo=grupo)
+		idEstudiante2=estudiante2.id
+		estudiante3=Alumno.objects.get(nombreCompleto=nombreEstudiante3 , grupo=grupo)
+		idEstudiante3=estudiante3.id
+		ids=[idEstudiante1,idEstudiante2,idEstudiante3]
+		fechaInicio=data['fechaInicio']
+		fechaFin=data['fechaFin']
+		
+
+		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion').annotate(maxNivel=Max('nivel'))\
+		.filter(idAlumno__in=ids, idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
+
+		return Response(query)
+
+
+class cuenta(APIView):
+
+	def post(self, request):
+		data=request.data
+		grupo=data['grupo']
+		estudiantes=Alumno.objects.filter(grupo=grupo)
+		fechaInicio=data['fechaInicio']
+		fechaFin=data['fechaFin']
+		
+
+		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion').annotate(maxNivel=Max('nivel'))\
+		.filter( idAlumno__in=estudiantes,idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
+
+		response=query.values('tipoOperacion','nivel').annotate(cuenta=Count('idAlumno'))
+
+		return Response(response)
+
+
+
+
+
+
+		
+
+
+"""
+{
+        "fechaInicio": "2017-10-31T06:43:27.916250Z",
+        "estudiante": "jonathan",
+"fechaFin": "2017-10-31T06:50:27.916250Z",
+"grupo": "1A"
+    }
+
+    {
+        "fechaInicio": "2017-10-31T06:43:35.339742Z",
+        "estudiante": "Nilton",
+"fechaFin": "2017-10-31T06:43:27.916250Z",
+"grupo": "1A"
+    }
+
+    {
+        "fechaInicio": "2017-10-31T06:43:27.916250Z",
+        "estudiante1": "jonathan",
+        "estudiante2": "Nilton",
+        "estudiante3": "camilo",
+"fechaFin": "2017-10-31T06:50:27.916250Z",
+"grupo": "1A"
+    }
+    """
+# for desempeno in desempenos]

@@ -35,7 +35,7 @@ class Desempeno(models.Model):
 	fechaReporte=models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
-		return self.id
+		return str(self.id)
 
 
 
@@ -44,7 +44,7 @@ class Sesion(models.Model):
 	idAlumno=models.ForeignKey('Alumno',on_delete=models.CASCADE)
 
 	def __str__(self):
-		return self.fechaInicio
+		return str(self.fechaInicio)
 
 
 

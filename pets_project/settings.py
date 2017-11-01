@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'pets_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'juego_dev',
+        'NAME': 'pets',
         'USER': 'developer',
         'PASSWORD': 'Developer08*',
         'HOST': 'dukeduster.eastus.cloudapp.azure.com',
