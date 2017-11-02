@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from .models import Alumno, Sesion, Desempeno, Historias, SabiasQue
 from .serializers import AlumnoSerializer, SesionSerializer, DesempenoSerializer, HistoriasSerializer, SabiasQueSerializer
 from django.db.models import Sum, Count, Max, Min
+from datetime import datetime
 
 class Alumnos(APIView):
 
@@ -155,80 +156,97 @@ class buscaAlumno(APIView):
 class barras(APIView):
 
 	def post(self, request):
-		data=request.data
-		nombreEstudiante=data['estudiante']
-		grupo=data['grupo']
-		estudiante=Alumno.objects.get(nombreCompleto=nombreEstudiante , grupo=grupo)
-		grupo=estudiante.grupo
-		idEstudiante=estudiante.id
-		fechaInicio=data['fechaInicio']
-		fechaFin=data['fechaFin']
+		try:
+			data=request.data
+			idEstudiante=data['idAlumno']
+			fechaInicio=data['fechaInicio']
+			fechaFin=data['fechaFin']
+		except KeyError:
+			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 		query=Desempeno.objects.values('tipoOperacion', 'nivel').annotate(aciertos=Sum('numeroAciertos'), fallos=Sum('numeroFallos'))\
 		.filter(idAlumno=idEstudiante, fechaReporte__gte=fechaInicio, fechaReporte__lte=fechaFin)
-		return Response(query)
+		if not query:
+			return Response(data={"msg":"no se encontraron datos"})
+		else:
+			return Response(query)
 
 
 class lineas(APIView):
 
 	def post(self, request):
-		data=request.data
-		nombreEstudiante=data['estudiante']
-		grupo=data['grupo']
-		estudiante=Alumno.objects.get(nombreCompleto=nombreEstudiante , grupo=grupo)
-		grupo=estudiante.grupo
-		idEstudiante=estudiante.id
-		fechaInicio=data['fechaInicio']
-		fechaFin=data['fechaFin']
-
-
+		try:
+			data=request.data
+			idEstudiante=data['idAlumno']
+			fechaInicio=data['fechaInicio']
+			fechaFin=data['fechaFin']
+			sesiones=Sesion.objects.filter(fechaInicio__gte=fechaInicio, fechaInicio__lte=fechaFin)
+		#sesion=Sesion.objects.first().fechaInicio
+		except KeyError:
+			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 
 		query=Desempeno.objects.values('idSesion').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
-		.filter(idAlumno=idEstudiante, idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
+		.filter(idAlumno=idEstudiante, idSesion__in=(sesiones))
 
-		return Response(query)
+		if not query:
+			return Response(data={"msg":"no se encontraron datos"})
+		else:
+			return Response(query)
 
 
 class lineasMax(APIView):
 
 	def post(self, request):
-		data=request.data
-		nombreEstudiante1=data['estudiante1']
-		nombreEstudiante2=data['estudiante2']
-		nombreEstudiante3=data['estudiante3']
-		grupo=data['grupo']
-		estudiante1=Alumno.objects.get(nombreCompleto=nombreEstudiante1 , grupo=grupo)
-		idEstudiante1=estudiante1.id
-		estudiante2=Alumno.objects.get(nombreCompleto=nombreEstudiante2 , grupo=grupo)
-		idEstudiante2=estudiante2.id
-		estudiante3=Alumno.objects.get(nombreCompleto=nombreEstudiante3 , grupo=grupo)
-		idEstudiante3=estudiante3.id
-		ids=[idEstudiante1,idEstudiante2,idEstudiante3]
-		fechaInicio=data['fechaInicio']
-		fechaFin=data['fechaFin']
+		try:
+			data=request.data
 
+			if len(data)==5:
+				idEstudiante1=data['idEstudiante1']
+				idEstudiante2=data['idEstudiante2']
+				idEstudiante3=data['idEstudiante3']
+				ids=[idEstudiante1,idEstudiante2,idEstudiante3]
+			elif len(data)==4:
+				idEstudiante1=data['idEstudiante1']
+				idEstudiante2=data['idEstudiante2']
+				ids=[idEstudiante1,idEstudiante2]
+			elif len(data)==3:
+				idEstudiante1=data['idEstudiante1']
+				ids=[idEstudiante1]
+			fechaInicio=data['fechaInicio']
+			fechaFin=data['fechaFin']
+
+			sesiones=Sesion.objects.filter(fechaInicio__gte=fechaInicio, fechaInicio__lte=fechaFin)
+		except KeyError:
+			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 
 		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion').annotate(maxNivel=Max('nivel'))\
-		.filter(idAlumno__in=ids, idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
-
-		return Response(query)
+		.filter(idAlumno__in=ids, idSesion__in=(sesiones)).order_by('idAlumno','tipoOperacion')
+		if not query:
+			return Response(data={"msg":"no se encontraron datos"})
+		else:
+			return Response(query)
 
 
 class cuenta(APIView):
 
 	def post(self, request):
-		data=request.data
-		grupo=data['grupo']
-		estudiantes=Alumno.objects.filter(grupo=grupo)
-		fechaInicio=data['fechaInicio']
-		fechaFin=data['fechaFin']
-
+		try:
+			data=request.data
+			grupo=data['grupo']
+			estudiantes=Alumno.objects.filter(grupo=grupo)
+			fechaInicio=data['fechaInicio']
+			fechaFin=data['fechaFin']
+			sesiones=Sesion.objects.filter(fechaInicio__gte=fechaInicio, fechaInicio__lte=fechaFin)
+		except KeyError:
+			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 
 		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion').annotate(maxNivel=Max('nivel'))\
-		.filter( idAlumno__in=estudiantes,idSesion__gte=fechaInicio, idSesion__lte=fechaFin)
+		.filter(idAlumno__in=estudiantes,idSesion__in=(sesiones))
+		if not query:
+			return Response(data={"msg":"no se encontraron datos"})
+		else:
+			response=query.values('tipoOperacion','nivel').annotate(cuenta=Count('idAlumno'))
 
-		response=query.values('tipoOperacion','nivel').annotate(cuenta=Count('idAlumno'))
-
-		return Response(response)
+			return Response(response)
 
 class getEstudiantesPorGrupo(APIView):
 	def get(self, request):
