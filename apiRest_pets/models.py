@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator 
 
 # Create your models here.
 
@@ -18,7 +19,7 @@ class Historias(models.Model):
 	tipoMascota=models.CharField(max_length=5)
 	habilitado=models.BooleanField(default=True)
 	tipoOperacion=models.IntegerField(blank=False)
-	nivel=models.IntegerField(min_value=1, max_value=5)
+	nivel=models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
 
 	def __str__(self):
 		return self.texto
