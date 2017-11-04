@@ -18,6 +18,7 @@ class Historias(models.Model):
 	tipoMascota=models.CharField(max_length=5)
 	habilitado=models.BooleanField(default=True)
 	tipoOperacion=models.IntegerField(blank=False)
+	nivel=models.IntegerField()
 
 	def __str__(self):
 		return self.texto
