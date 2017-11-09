@@ -184,7 +184,7 @@ class lineas(APIView):
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 
-		query=Desempeno.objects.values('idSesion_fechaInicio').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
+		query=Desempeno.objects.values('idSesion__fechaInicio').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
 		.filter(idAlumno=idEstudiante, idSesion__in=(sesiones))
 
 		if not query:
