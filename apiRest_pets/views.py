@@ -184,7 +184,7 @@ class lineas(APIView):
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 
-		query=Desempeno.objects.values('idSesion').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
+		query=Desempeno.objects.values('idSesion_fechaInicio').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
 		.filter(idAlumno=idEstudiante, idSesion__in=(sesiones))
 
 		if not query:
@@ -217,8 +217,8 @@ class lineasMax(APIView):
 			sesiones=Sesion.objects.filter(fechaInicio__gte=fechaInicio, fechaInicio__lte=fechaFin)
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
-
-		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion').annotate(maxNivel=Max('nivel'))\
+		
+		query=Desempeno.objects.values('idAlumno', 'tipoOperacion','idSesion__fechaInicio' ).annotate(maxNivel=Max('nivel'))\
 		.filter(idAlumno__in=ids, idSesion__in=(sesiones)).order_by('idAlumno','tipoOperacion')
 		if not query:
 			return Response(data={"msg":"no se encontraron datos"})
@@ -239,8 +239,8 @@ class cuenta(APIView):
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 
-		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion').annotate(maxNivel=Max('nivel'))\
-		.filter(idAlumno__in=estudiantes,idSesion__in=(sesiones))
+		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion__fechaInicio').annotate(maxNivel=Max('nivel'))\
+		.filter(idAlumno__in=estudiantes,idSesion__in=sesiones)
 		if not query:
 			return Response(data={"msg":"no se encontraron datos"})
 		else:
