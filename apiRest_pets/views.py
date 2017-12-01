@@ -4,7 +4,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from .models import Alumno, Sesion, Desempeno, Historias, SabiasQue
 from .serializers import AlumnoSerializer, SesionSerializer, DesempenoSerializer, HistoriasSerializer, SabiasQueSerializer
-from django.db.models import Sum, Count, Max, Min
+from django.db.models import Sum, Count, Max, Min, DateField
+from django.db.models.functions import Cast
 from datetime import datetime
 
 class Alumnos(APIView):
@@ -184,6 +185,8 @@ class lineas(APIView):
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 
+		"""query=Desempeno.objects.values('idSesion__fechaInicio').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
+		.filter(idAlumno=idEstudiante, idSesion__in=(sesiones))"""
 		query=Desempeno.objects.values('idSesion__fechaInicio').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
 		.filter(idAlumno=idEstudiante, idSesion__in=(sesiones))
 
@@ -218,12 +221,14 @@ class lineasMax(APIView):
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 		
-		query=Desempeno.objects.values('idAlumno', 'tipoOperacion','idSesion__fechaInicio' ).annotate(maxNivel=Max('nivel'))\
+		query=Desempeno.objects.values('idAlumno', 'tipoOperacion').annotate(maxNivel=Max('nivel'))\
 		.filter(idAlumno__in=ids, idSesion__in=(sesiones)).order_by('idAlumno','tipoOperacion')
+
+		result= query.annotate(sesion=Cast("idSesion__fechaInicio", DateField()))
 		if not query:
 			return Response(data={"msg":"no se encontraron datos"})
 		else:
-			return Response(query)
+			return Response(result)
 
 
 class cuenta(APIView):
