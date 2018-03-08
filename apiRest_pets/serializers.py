@@ -10,7 +10,6 @@ from .models import Grupo
 from .models import Docente
 from .models import Grupo_Docente
 
-
 class AlumnoSerializer(serializers.ModelSerializer):
 
 	class Meta:
@@ -44,7 +43,6 @@ class SabiasQueSerializer(serializers.ModelSerializer):
 	class Meta:
 		model=SabiasQue
 		fields=('id', 'texto', 'habilitado')
-
 
 class PermisosSerializer(serializers.ModelSerializer):
 

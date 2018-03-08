@@ -41,7 +41,6 @@ class Actividad(models.Model):
 	def __str__(self):
 		return self.texto
 
-
 class Desempeno(models.Model):
 	id=models.AutoField(primary_key=True)
 	numeroAciertos=models.IntegerField()
@@ -52,7 +51,6 @@ class Desempeno(models.Model):
 	idSesion=models.ForeignKey('Sesion',on_delete=models.CASCADE)
 	fechaReporte=models.DateTimeField(auto_now_add=True)
 	grupo=models.ForeignKey('Grupo',on_delete=models.CASCADE)
-
 	def __str__(self):
 		return str(self.id)
 
@@ -74,7 +72,6 @@ class Grupo(models.Model):
 
 	def __str__(self):
 		return str(self.grupoId)
-
 
 class Alumno(models.Model):
 	id=models.AutoField(primary_key=True)
@@ -101,4 +98,4 @@ class Docente(models.Model):
 
 
 	def __str__(self):
-		return self.nombre		
+		return self.nombre
