@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-from .models import Alumno, Sesion, Desempeno, Historias, SabiasQue, Grupo_Docente, Docente, Grupo, Actividad, Permisos
-from .serializers import AlumnoSerializer, PermisosSerializer, ActividadSerializer, GrupoSerializer, DocenteSerializer, Grupo_DocenteSerializer, SesionSerializer, DesempenoSerializer, HistoriasSerializer, SabiasQueSerializer
+from .models import Alumno, Sesion, Estadistica, Grupo_Docente, Texto, Tipo_Texto, Docente, Grupo, Permisos, Configuracion
+from .serializers import AlumnoSerializer, PermisosSerializer, TextoSerializer, Tipo_TextoSerializer, GrupoSerializer, DocenteSerializer, Grupo_DocenteSerializer, ConfiguracionSerializer, SesionSerializer, EstadisticaSerializer
 from django.db.models import Sum, Count, Max, Min, DateField
 from django.db.models.functions import Cast
 from datetime import datetime
@@ -49,7 +49,7 @@ class Docentes(APIView):
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
 	def put(self, request, format=None):
-		docente=Docente.objects.get(identificacion=request.data['identificacion'])
+		docente=Docente.objects.get(identificacion=request.data['id'])
 		serializer=DocenteSerializer(docente, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
@@ -83,31 +83,6 @@ class Permisos(APIView):
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)		
 
 
-class Actividades(APIView):
-
-	def get(self, request):
-		listaActividades=Actividad.objects.all()
-		serializer= ActividadSerializer(listaActividades, many=True)
-		return Response(serializer.data)
-
-	def post(self, request):
-		serializer=ActividadSerializer(data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
-		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
-
-	def put(self, request, format=None):
-		actividad=Actividad.objects.get(id=request.data['id'])
-		serializer=ActividadSerializer(actividad, data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data)
-		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)		
-
-
 class Grupos(APIView):
 
 	def get(self, request):
@@ -132,6 +107,29 @@ class Grupos(APIView):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)					
 
+class Configuracion(APIView):
+
+	def get(self, request):
+		config=Configuracion.objects.all()
+		serializer= ConfiguracionSerializer(config, many=True)
+		return Response(serializer.data)
+
+	def post(self, request):
+		serializer=ConfiguracionSerializer(data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+
+	def put(self, request, format=None):
+		config=Configuracion.objects.get(id=request.data['id'])
+		serializer=ConfiguracionSerializer(config, data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)					
 
 
 class Sesiones(APIView):
@@ -159,7 +157,7 @@ class Sesiones(APIView):
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
 
-class Desempenos(APIView):
+class Estadistica(APIView):
 
 	def get(self, request):
 		listaDesempenos=Desempeno.objects.all()
@@ -186,55 +184,65 @@ class Desempenos(APIView):
 
 
 class Histories(APIView):
-
-
 	def get(self, request):
-		listaHistorias=Historias.objects.all()
-		serializer= HistoriasSerializer(listaHistorias, many=True)
+		listaHistorias=Texto.objects.filter(tipoTexto=1)
+		serializer= TextoSerializer(listaHistorias, many=True)
 		return Response(serializer.data)
 
 	def post(self, request):
-		serializer=HistoriasSerializer(data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		if request.data['tipoTexto'] == 1:
+			serializer=TextoSerializer(data=request.data)
+			if serializer.is_valid():
+				serializer.save()
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+			else:
+				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})
 
 	def put(self, request, format=None):
-		historia=Historias.objects.get(id=request.data['id'])
-		serializer=HistoriasSerializer(historia, data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data)
+		if request.data['tipoTexto'] == 1:
+			historia=Texto.objects.filter(id=request.data['id'])
+			serializer=TextoSerializer(historia, data=request.data)
+			if serializer.is_valid():
+				serializer.save()
+				return Response(serializer.data)
+			else:
+				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})			
 
 
 
 class Sabiasque(APIView):
 
 	def get(self, request):
-		listaSabiasQue=SabiasQue.objects.all()
-		serializer= SabiasQueSerializer(listaSabiasQue, many=True)
+		listaSabiasQue=Texto.objects.filter(tipoTexto=2)
+		serializer= TextoSerializer(listaSabiasQue, many=True)
 		return Response(serializer.data)
 
 	def post(self, request):
-		serializer=SabiasQueSerializer(data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		if request.data['tipoTexto'] == 2:
+			serializer=TextoSerializer(data=request.data)
+			if serializer.is_valid():
+				serializer.save()
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+			else:
+				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(data={"msg":"El texto ingresado no corresponde a un 'sabias que'"})
 
 	def put(self, request, format=None):
-		sabiasque=SabiasQue.objects.get(id=request.data['id'])
-		serializer=SabiasQueSerializer(sabiasque, data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data)
+		if request.data['tipoTexto'] == 2:
+			sabiasque=Texto.objects.filter(id=request.data['id'])
+			serializer=TextoSerializer(sabiasque, data=request.data)
+			if serializer.is_valid():
+				serializer.save()
+				return Response(serializer.data)
+			else:
+				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(data={"msg":"El texto ingresado no corresponde a un 'sabias que'"})
 
 
 class buscaAlumno(APIView):
