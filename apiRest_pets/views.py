@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-from .models import Alumno, Sesion, Estadistica, Grupo_Docente, Texto, Tipo_Texto, Docente, Grupo, Permisos, Configuracion
-from .serializers import AlumnoSerializer, PermisosSerializer, TextoSerializer, Tipo_TextoSerializer, GrupoSerializer, DocenteSerializer, Grupo_DocenteSerializer, ConfiguracionSerializer, SesionSerializer, EstadisticaSerializer
+from .models import Alumno, Sesion, Estadistica, Grupo_Docente, Texto, Tipo_Texto, Docente, Grupo, Permisos, Configuracion, Juego
+from .serializers import AlumnoSerializer, PermisosSerializer, TextoSerializer, Tipo_TextoSerializer, GrupoSerializer, DocenteSerializer, Grupo_DocenteSerializer, ConfiguracionSerializer, SesionSerializer, EstadisticaSerializer, JuegoSerializer
 from django.db.models import Sum, Count, Max, Min, DateField
 from django.db.models.functions import Cast
 from datetime import datetime
@@ -107,7 +107,7 @@ class Grupos(APIView):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)					
 
-class Configuracion(APIView):
+class Configuraciones(APIView):
 
 	def get(self, request):
 		config=Configuracion.objects.all()
@@ -157,15 +157,15 @@ class Sesiones(APIView):
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
 
-class Estadistica(APIView):
+class Estadisticas(APIView):
 
 	def get(self, request):
-		listaDesempenos=Desempeno.objects.all()
-		serializer= DesempenoSerializer(listaDesempenos, many=True)
+		listaEstadisticas=Estadistica.objects.all()
+		serializer= EstadisticaSerializer(listaEstadisticas, many=True)
 		return Response(serializer.data)
 
 	def post(self, request):
-		serializer=DesempenoSerializer(data=request.data)
+		serializer=EstadisticaSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -173,8 +173,8 @@ class Estadistica(APIView):
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
 	def put(self, request, format=None):
-		des=Desempeno.objects.get(id=request.data['id'])
-		serializer=DesempenoSerializer(des, data=request.data)
+		est=Estadistica.objects.get(id=request.data['id'])
+		serializer=EstadisticaSerializer(est, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data)
@@ -183,10 +183,10 @@ class Estadistica(APIView):
 
 
 
-class Histories(APIView):
+class Textos(APIView):
 	def get(self, request):
-		listaHistorias=Texto.objects.filter(tipoTexto=1)
-		serializer= TextoSerializer(listaHistorias, many=True)
+		listaTextos=Texto.objects.filter(tipoTexto=1)
+		serializer= TextoSerializer(listaTextos, many=True)
 		return Response(serializer.data)
 
 	def post(self, request):
@@ -210,39 +210,7 @@ class Histories(APIView):
 			else:
 				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 		else:
-			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})			
-
-
-
-class Sabiasque(APIView):
-
-	def get(self, request):
-		listaSabiasQue=Texto.objects.filter(tipoTexto=2)
-		serializer= TextoSerializer(listaSabiasQue, many=True)
-		return Response(serializer.data)
-
-	def post(self, request):
-		if request.data['tipoTexto'] == 2:
-			serializer=TextoSerializer(data=request.data)
-			if serializer.is_valid():
-				serializer.save()
-				return Response(serializer.data, status=status.HTTP_201_CREATED)
-			else:
-				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
-		else:
-			return Response(data={"msg":"El texto ingresado no corresponde a un 'sabias que'"})
-
-	def put(self, request, format=None):
-		if request.data['tipoTexto'] == 2:
-			sabiasque=Texto.objects.filter(id=request.data['id'])
-			serializer=TextoSerializer(sabiasque, data=request.data)
-			if serializer.is_valid():
-				serializer.save()
-				return Response(serializer.data)
-			else:
-				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
-		else:
-			return Response(data={"msg":"El texto ingresado no corresponde a un 'sabias que'"})
+			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})
 
 
 class buscaAlumno(APIView):
@@ -250,13 +218,13 @@ class buscaAlumno(APIView):
 	def get(self, request):
 		username = request.GET.get('username','default')
 		nombreCompleto=username
-		alumno=Alumno.objects.filter(nombreCompleto=nombreCompleto)
+		alumno=Alumno.objects.filter(nombre_completo=nombreCompleto)
 		if not alumno:
 			return Response(data={"existe":False})
 		else:
 			serializer=AlumnoSerializer(alumno[0])
 			respuesta={
-				"nombreCompleto":serializer.data['nombreCompleto'],
+				"nombre_completo":serializer.data['nombre_completo'],
 				"id":serializer.data['id'],
 				"grupo":serializer.data['grupo'],
 				"existe":True
@@ -273,8 +241,8 @@ class barras(APIView):
 			fechaFin=data['fechaFin']
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
-		query=Desempeno.objects.values('tipoOperacion', 'nivel').annotate(aciertos=Sum('numeroAciertos'), fallos=Sum('numeroFallos'))\
-		.filter(idAlumno=idEstudiante, fechaReporte__gte=fechaInicio, fechaReporte__lte=fechaFin)
+		query=Estadistica.objects.values('tipoOperacion', 'nivel').annotate(aciertos=Sum('numeroAciertos'), fallos=Sum('numeroFallos'))\
+		.filter(sesion__idAlumno=idEstudiante, fechaReporte__gte=fechaInicio, fechaReporte__lte=fechaFin)
 		if not query:
 			return Response(data={"msg":"no se encontraron datos"})
 		else:
@@ -296,8 +264,10 @@ class lineas(APIView):
 
 		"""query=Desempeno.objects.values('idSesion__fechaInicio').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
 		.filter(idAlumno=idEstudiante, idSesion__in=(sesiones))"""
-		query=Desempeno.objects.values('idSesion__fechaInicio').annotate(jugados=Count('idSesion'),fmax=Max('fechaReporte'), finicial=Min('fechaReporte'))\
-		.filter(idAlumno=idEstudiante, idSesion__in=(sesiones))
+
+		query=Estadistica.objects.values('sesion__idAlumno').annotate(jugados=Count('sesion'),fmax=Max('fechaReporte'), finicial=Min('sesion__fechaInicio'))\
+		.filter(sesion__idAlumno=idEstudiante, sesion__in=(sesiones))
+
 
 		if not query:
 			return Response(data={"msg":"no se encontraron datos"})
@@ -330,10 +300,10 @@ class lineasMax(APIView):
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 		
-		query=Desempeno.objects.values('idAlumno', 'tipoOperacion').annotate(maxNivel=Max('nivel'))\
-		.filter(idAlumno__in=ids, idSesion__in=(sesiones)).order_by('idAlumno','tipoOperacion')
+		query=Estadistica.objects.values('sesion__idAlumno', 'tipoOperacion').annotate(maxNivel=Max('nivel'))\
+		.filter(sesion__idAlumno__in=ids, sesion__in=(sesiones)).order_by('sesion__idAlumno','tipoOperacion')
 
-		result= query.annotate(sesion=Cast("idSesion__fechaInicio", DateField()))
+		result= query.annotate(sesion=Cast("sesion__fechaInicio", DateField()))
 		if not query:
 			return Response(data={"msg":"no se encontraron datos"})
 		else:
@@ -353,12 +323,12 @@ class cuenta(APIView):
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 
-		query=Desempeno.objects.values('idAlumno', 'tipoOperacion', 'idSesion__fechaInicio').annotate(maxNivel=Max('nivel'))\
-		.filter(idAlumno__in=estudiantes,idSesion__in=sesiones)
+		query=Estadistica.objects.values('sesion__idAlumno', 'tipoOperacion', 'sesion__fechaInicio').annotate(maxNivel=Max('nivel'))\
+		.filter(sesion__idAlumno__in=estudiantes,sesion__in=sesiones)
 		if not query:
 			return Response(data={"msg":"no se encontraron datos"})
 		else:
-			response=query.values('tipoOperacion','nivel').annotate(cuenta=Count('idAlumno'))
+			response=query.values('tipoOperacion','nivel').annotate(cuenta=Count('sesion__idAlumno'))
 
 			return Response(response)
 

@@ -77,12 +77,15 @@ WSGI_APPLICATION = 'pets_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'sql_server.pyodbc',
         'NAME': 'juego',
         'USER': 'root',
         'PASSWORD': 'root',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'HOST': 'DESKTOP-K51338U',
+        'PORT': '',
+        'OPTIONS': {
+            'driver': 'SQL Server',
+        },
     }
 }
 

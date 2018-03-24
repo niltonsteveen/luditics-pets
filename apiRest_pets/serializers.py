@@ -60,7 +60,7 @@ class ConfiguracionSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model=Configuracion
-		fields=('id', 'rangoMin', 'rangoMax', 'orden', 'ayuda', 'numPorOp')
+		fields=('id', 'rangoMin', 'rangoMax', 'orden', 'ayuda', 'numPorOP')
 
 class Tipo_TextoSerializer(serializers.ModelSerializer):
 
