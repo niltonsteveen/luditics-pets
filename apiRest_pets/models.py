@@ -8,7 +8,7 @@ class Texto(models.Model):
 	tipoTexto=models.ForeignKey('Tipo_Texto',on_delete=models.CASCADE)
 	habilitado=models.BooleanField(default=True)
 	descripcion=models.CharField(max_length=400)
-	tipoMascota=models.CharField(max_length=400, blank=True)
+	tipoMascota=models.CharField(max_length=400, blank=True, null=True)
 	tipoOperacion=models.IntegerField(blank=True, null=True)
 	nivel=models.IntegerField(blank=True, null=True)
 	"""docstring for ClassName"""
@@ -26,7 +26,7 @@ class Permisos(models.Model):
 class Juego(models.Model):
 	id=models.CharField(primary_key=True, max_length=30)
 	descripcion=models.CharField(max_length=400)
-	configuracion=models.OneToOneField('Configuracion', on_delete=models.CASCADE, blank=True)
+	configuracion=models.OneToOneField('Configuracion', on_delete=models.CASCADE, blank=True, null=True)
 
 	def __str__(self):
 		return self.descripcion
@@ -93,7 +93,7 @@ class Estadistica(models.Model):
 	id=models.AutoField(primary_key=True)
 	numeroAciertos=models.IntegerField()
 	numeroFallos=models.IntegerField()
-	nivel=models.IntegerField(blank=True)
+	nivel=models.IntegerField(blank=True, null=True)
 	tipoOperacion=models.IntegerField()
 	fechaReporte=models.DateTimeField(auto_now_add=True)
 	sesion=models.ForeignKey('Sesion',on_delete=models.CASCADE)
