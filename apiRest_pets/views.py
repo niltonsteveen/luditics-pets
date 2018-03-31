@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
+from django.http import Http404
 from rest_framework.response import Response
 from .models import Alumno, Sesion, Estadistica, Grupo_Docente, Texto, Tipo_Texto, Docente, Grupo, Permisos, Configuracion, Juego
 from .serializers import AlumnoSerializer, PermisosSerializer, TextoSerializer, Tipo_TextoSerializer, GrupoSerializer, DocenteSerializer, Grupo_DocenteSerializer, ConfiguracionSerializer, SesionSerializer, EstadisticaSerializer, JuegoSerializer
@@ -21,7 +22,7 @@ class Alumnos(APIView):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 	def put(self, request, format=None):
 		alumno=Alumno.objects.get(id=request.data['id'])
@@ -30,7 +31,7 @@ class Alumnos(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 
 class Docentes(APIView):
@@ -46,7 +47,7 @@ class Docentes(APIView):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 	def put(self, request, format=None):
 		docente=Docente.objects.get(identificacion=request.data['id'])
@@ -55,7 +56,7 @@ class Docentes(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)			
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)			
 
 
 class Permisos(APIView):
@@ -71,7 +72,7 @@ class Permisos(APIView):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 	def put(self, request, format=None):
 		permiso=Permisos.objects.get(id=request.data['id'])
@@ -80,7 +81,7 @@ class Permisos(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)		
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)		
 
 
 class Grupos(APIView):
@@ -91,12 +92,15 @@ class Grupos(APIView):
 		return Response(serializer.data)
 
 	def post(self, request):
+		data=request.data
 		serializer=GrupoSerializer(data=request.data)
+		print(data['id'])
 		if serializer.is_valid():
+			print('entro por aca')
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 	def put(self, request, format=None):
 		grupo=Grupo.objects.get(id=request.data['id'])
@@ -105,7 +109,7 @@ class Grupos(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)					
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)					
 
 class Configuraciones(APIView):
 
@@ -120,7 +124,7 @@ class Configuraciones(APIView):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 	def put(self, request, format=None):
 		config=Configuracion.objects.get(id=request.data['id'])
@@ -129,7 +133,7 @@ class Configuraciones(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)					
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)					
 
 
 class Sesiones(APIView):
@@ -145,8 +149,8 @@ class Sesiones(APIView):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
-
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+"""
 	def put(self, request, format=None):
 		sesion=Sesion.objects.get(fechaInicio=request.data['fechaInicio'])
 		serializer=SesionSerializer(sesion, data=request.data)
@@ -154,9 +158,9 @@ class Sesiones(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
-
+"""
 class Estadisticas(APIView):
 
 	def get(self, request):
@@ -170,7 +174,7 @@ class Estadisticas(APIView):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 	def put(self, request, format=None):
 		est=Estadistica.objects.get(id=request.data['id'])
@@ -179,7 +183,7 @@ class Estadisticas(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -196,7 +200,7 @@ class Textos(APIView):
 				serializer.save()
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 			else:
-				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+				return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 		else:
 			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})
 
@@ -208,7 +212,7 @@ class Textos(APIView):
 				serializer.save()
 				return Response(serializer.data)
 			else:
-				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+				return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 		else:
 			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})
 

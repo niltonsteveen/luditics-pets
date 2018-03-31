@@ -70,7 +70,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'pets_project.wsgi.application'
-
+APPEND_SLASH=False
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'pets_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'juego',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'DESKTOP-K51338U',
-        'PORT': '',
+        'NAME': 'luditics',
+        'USER': 'luditics',
+        'PASSWORD': 'Lud1t1cs2018**',
+        'HOST': 'luditics.database.windows.net',
+        'PORT': '1433',
         'OPTIONS': {
             'driver': 'SQL Server',
         },

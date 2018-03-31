@@ -8,6 +8,9 @@ class Texto(models.Model):
 	tipoTexto=models.ForeignKey('Tipo_Texto',on_delete=models.CASCADE)
 	habilitado=models.BooleanField(default=True)
 	descripcion=models.CharField(max_length=400)
+	tipoMascota=models.CharField(max_length=400, blank=True)
+	tipoOperacion=models.IntegerField(blank=True, null=True)
+	nivel=models.IntegerField(blank=True, null=True)
 	"""docstring for ClassName"""
 	def __str__(self):
 		return self.descripcion
@@ -23,7 +26,7 @@ class Permisos(models.Model):
 class Juego(models.Model):
 	id=models.CharField(primary_key=True, max_length=30)
 	descripcion=models.CharField(max_length=400)
-	configuracion=models.OneToOneField('Configuracion', on_delete=models.CASCADE)
+	configuracion=models.OneToOneField('Configuracion', on_delete=models.CASCADE, blank=True)
 
 	def __str__(self):
 		return self.descripcion
