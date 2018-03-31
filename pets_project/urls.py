@@ -23,6 +23,8 @@ urlpatterns = [
     url(r'^sesiones/', views.Sesiones.as_view()),
     url(r'^estadisticas/', views.Estadisticas.as_view()),
     url(r'^textos/', views.Textos.as_view()),
+    url(r'^historias/', views.Historias.as_view()),
+    url(r'^sabiasQue/', views.SabiasQue.as_view()),
     url(r'^docentes/', views.Docentes.as_view()),    
     url(r'^permisos/', views.Permisos.as_view()),
     url(r'^grupos/', views.Grupos.as_view()),

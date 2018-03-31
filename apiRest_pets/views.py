@@ -189,8 +189,31 @@ class Estadisticas(APIView):
 
 class Textos(APIView):
 	def get(self, request):
-		listaTextos=Texto.objects.filter(tipoTexto=1)
+		listaTextos=Texto.objects.all()
 		serializer= TextoSerializer(listaTextos, many=True)
+		return Response(serializer.data)
+
+	def post(self, request):
+		serializer=TextoSerializer(data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+
+	def put(self, request, format=None):
+		texto=Texto.objects.get(id=request.data['id'])
+		serializer=TextoSerializer(texto, data=request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response(serializer.data)
+		else:
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+
+class Historias(APIView):
+	def get(self, request):
+		listaHistorias=Texto.objects.filter(tipoTexto=1)
+		serializer= TextoSerializer(listaHistorias, many=True)
 		return Response(serializer.data)
 
 	def post(self, request):
@@ -215,6 +238,35 @@ class Textos(APIView):
 				return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 		else:
 			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})
+
+class SabiasQue(APIView):
+	def get(self, request):
+		listaTextos=Texto.objects.filter(tipoTexto=2)
+		serializer= TextoSerializer(listaTextos, many=True)
+		return Response(serializer.data)
+
+	def post(self, request):
+		if request.data['tipoTexto'] == 2:
+			serializer=TextoSerializer(data=request.data)
+			if serializer.is_valid():
+				serializer.save()
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+			else:
+				return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+		else:
+			return Response(data={"msg":"El texto ingresado no corresponde a un sabías que"})
+
+	def put(self, request, format=None):
+		if request.data['tipoTexto'] == 2:
+			historia=Texto.objects.filter(id=request.data['id'])
+			serializer=TextoSerializer(historia, data=request.data)
+			if serializer.is_valid():
+				serializer.save()
+				return Response(serializer.data)
+			else:
+				return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+		else:
+			return Response(data={"msg":"El texto ingresado no corresponde a un sabías que"})
 
 
 class buscaAlumno(APIView):

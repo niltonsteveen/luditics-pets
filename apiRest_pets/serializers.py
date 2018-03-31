@@ -48,7 +48,7 @@ class TextoSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model=Texto
-		fields=('id', 'tipoTexto', 'habilitado', 'descripcion')
+		fields=('id', 'tipoTexto', 'habilitado', 'descripcion','tipoMascota','tipoOperacion','nivel')
 
 class JuegoSerializer(serializers.ModelSerializer):
 
