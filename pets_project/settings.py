@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'pets_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'juego',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'DESKTOP-K51338U',
-        'PORT': '',
+        'NAME': 'luditics',
+        'USER': 'luditics@luditics',
+        'PASSWORD': 'Lud1t1cs2018**',
+        'HOST': 'luditics.database.windows.net',
+        'PORT': '1433',
         'OPTIONS': {
             'driver': 'SQL Server',
         },
