@@ -19,15 +19,16 @@ from apiRest_pets import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^alumnos/', views.Alumnos.as_view()),
+    url(r'^alumnos/$', views.Alumnos.as_view()),
     url(r'^sesiones/', views.Sesiones.as_view()),
     url(r'^estadisticas/', views.Estadisticas.as_view()),
     url(r'^textos/', views.Textos.as_view()),
-    url(r'^historias/', views.Historias.as_view()),
-    url(r'^sabiasQue/', views.SabiasQue.as_view()),
+    url(r'^historias/$', views.Historias.as_view()),
+    url(r'^sabiasQue/$', views.SabiasQue.as_view()),
+    url(r'^sabiasQue/(?P<pk>[0-9]+)/$', views.SabiasQueDetail.as_view()),
     url(r'^docentes/', views.Docentes.as_view()),    
     url(r'^permisos/', views.Permisos.as_view()),
-    url(r'^grupos/', views.Grupos.as_view()),
+    url(r'^grupos/$', views.Grupos.as_view()),
     url(r'^configuracion/', views.Configuraciones.as_view()),
     url(r'^buscaAlumno/$', views.buscaAlumno.as_view()),
     url(r'^getEstudiantesPorGrupo/$', views.getEstudiantesPorGrupo.as_view()),
@@ -35,4 +36,7 @@ urlpatterns = [
     url(r'^lineas/', views.lineas.as_view()),
     url(r'^lineasMax/', views.lineasMax.as_view()),
     url(r'^cuenta/', views.cuenta.as_view()),
+    url(r'^alumnos/(?P<pk>[0-9]+)/$', views.AlumnoDetail.as_view()),
+    url(r'^historias/(?P<pk>[0-9]+)/$', views.HistoriasDetail.as_view()),
+    url(r'^grupos/(?P<pk>\d*-*\d*_*\d*)/$', views.GruposDetail.as_view()),
 ]

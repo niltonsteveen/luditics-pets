@@ -31,6 +31,7 @@ DEBUG = True
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'corsheaders',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -47,6 +48,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'pets_project.urls'
@@ -75,11 +79,11 @@ WSGI_APPLICATION = 'pets_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'luditics',
-        'USER': 'luditics',
-        'PASSWORD': 'Lud1t1cs2018**',
-        'HOST': 'luditics.database.windows.net',
-        'PORT': '1433',
+        'NAME': 'juego',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'DESKTOP-K51338U',
+        'PORT': '',
         'OPTIONS': {
             'driver': 'SQL Server',
         },
@@ -135,4 +139,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 #ALLOWED_HOSTS = ['luditics.eastus.cloudapp.azure.com', 'localhost', '127.0.0.1']
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['http://localhost:56689','http://localhost:4200','*']
+CORS_ORIGIN_ALLOW_ALL = True

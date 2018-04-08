@@ -25,13 +25,25 @@ class Alumnos(APIView):
 			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 	def put(self, request, format=None):
-		alumno=Alumno.objects.get(id=request.data['id'])
-		serializer=AlumnoSerializer(alumno, data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data)
-		else:
-			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+			alumno=Alumno.objects.filter(id=request.data['id'])
+			print(request.data)
+			serializer=AlumnoSerializer(alumno[0], data=request.data)
+			if serializer.is_valid():
+				serializer.save()
+				return Response(serializer.data)
+			else:
+				return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+
+class AlumnoDetail(APIView):
+	def get(self, request, pk, format=None):
+		alumno=Alumno.objects.filter(id=pk)
+		serializer= AlumnoSerializer(alumno[0], many=False)
+		return Response(serializer.data)
+
+	def delete(self, request, pk, format=None):
+		alumno = Alumno.objects.filter(id=pk)
+		alumno[0].delete()
+		return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class Docentes(APIView):
@@ -109,7 +121,20 @@ class Grupos(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)					
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+
+class GruposDetail(APIView):
+	def get(self, request, pk, format=None):
+		grupo=Grupo.objects.filter(id=pk)
+		serializer= GrupoSerializer(grupo[0], many=False)
+		return Response(serializer.data)
+
+	def delete(self, request, pk, format=None):
+		grupo = Grupo.objects.filter(id=pk)
+		grupo[0].delete()
+		return Response(status=status.HTTP_204_NO_CONTENT)	
+
+					
 
 class Configuraciones(APIView):
 
@@ -168,7 +193,9 @@ class Estadisticas(APIView):
 		serializer= EstadisticaSerializer(listaEstadisticas, many=True)
 		return Response(serializer.data)
 
-	def post(self, request):
+	def post(self, request):	
+		print(request.data['sesion'])
+
 		serializer=EstadisticaSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save()
@@ -230,7 +257,7 @@ class Historias(APIView):
 	def put(self, request, format=None):
 		if request.data['tipoTexto'] == 1:
 			historia=Texto.objects.filter(id=request.data['id'])
-			serializer=TextoSerializer(historia, data=request.data)
+			serializer=TextoSerializer(historia[0], data=request.data)
 			if serializer.is_valid():
 				serializer.save()
 				return Response(serializer.data)
@@ -238,6 +265,17 @@ class Historias(APIView):
 				return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 		else:
 			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})
+
+class HistoriasDetail(APIView):
+	def get(self, request, pk, format=None):
+		listaTextos=Texto.objects.filter(id=pk)
+		serializer= TextoSerializer(listaTextos[0], many=False)
+		return Response(serializer.data)
+
+	def delete(self, request, pk, format=None):
+		texto = Texto.objects.filter(id=pk)
+		texto[0].delete()
+		return Response(status=status.HTTP_204_NO_CONTENT)
 
 class SabiasQue(APIView):
 	def get(self, request):
@@ -259,7 +297,7 @@ class SabiasQue(APIView):
 	def put(self, request, format=None):
 		if request.data['tipoTexto'] == 2:
 			historia=Texto.objects.filter(id=request.data['id'])
-			serializer=TextoSerializer(historia, data=request.data)
+			serializer=TextoSerializer(historia[0], data=request.data)
 			if serializer.is_valid():
 				serializer.save()
 				return Response(serializer.data)
@@ -267,6 +305,19 @@ class SabiasQue(APIView):
 				return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 		else:
 			return Response(data={"msg":"El texto ingresado no corresponde a un sabías que"})
+
+class SabiasQueDetail(APIView):
+	def get(self, request, pk, format=None):
+		print("has entrado muchacho")
+		listaTextos=Texto.objects.filter(id=pk)	
+		print(len(listaTextos))	
+		serializer= TextoSerializer(listaTextos[0], many=False)
+		return Response(serializer.data)
+
+	def delete(self, request, pk, format=None):
+		texto = Texto.objects.filter(id=pk)
+		texto[0].delete()
+		return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class buscaAlumno(APIView):
