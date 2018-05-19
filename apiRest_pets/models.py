@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator 
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
 
@@ -86,15 +86,14 @@ class Grupo_Docente(models.Model):
 	grupo=models.ForeignKey('Grupo',on_delete=models.CASCADE)
 
 	def __str__(self):
-		return self.nombreCompleto	
+		return self.nombreCompleto
 
 class Docente(models.Model):
 	identificacion=models.IntegerField(primary_key=True)
 	nombre=models.CharField(max_length=300)
 	password=models.CharField(max_length=30)
-	permisos=models.IntegerField()
 	correo=models.CharField(max_length=355)
-	permisos=models.ForeignKey('Permisos',on_delete=models.CASCADE)
+	rol=models.CharField(max_length=30)
 
 
 	def __str__(self):

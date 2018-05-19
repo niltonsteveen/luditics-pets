@@ -67,7 +67,7 @@ class DocenteSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model=Docente
-		fields=('identificacion', 'nombre', 'password','permisos', 'correo', 'permisos')
+		fields=('identificacion', 'nombre', 'password', 'correo', 'rol')
 
 class Grupo_DocenteSerializer(serializers.ModelSerializer):
 

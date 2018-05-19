@@ -33,6 +33,18 @@ class Alumnos(APIView):
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
 
+class DocenteById(APIView):
+	def post(self, request):
+		docente=Docente.objects.get(identificacion=request.data['identificacion'])
+		if docente == None:
+			return Response(data={"error":"El docente ingresado no esta registrado"}, status=status.HTTP_400_BAD_REQUESTS)
+		else:
+			serializer=DocenteSerializer(docente, many=False)
+			if serializer.is_valid() && serializer['password']==request.data['password']:				
+				return Response(serializer.data)
+			else:
+				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+
 class Docentes(APIView):
 
 	def get(self, request):
@@ -55,7 +67,7 @@ class Docentes(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)			
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
 
 class Permisos(APIView):
@@ -80,7 +92,7 @@ class Permisos(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)		
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
 
 class Grupos(APIView):
@@ -105,7 +117,7 @@ class Grupos(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)					
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
 class Configuracion(APIView):
 
@@ -129,7 +141,7 @@ class Configuracion(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)					
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 
 
 class Sesiones(APIView):
@@ -210,7 +222,7 @@ class Histories(APIView):
 			else:
 				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
 		else:
-			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})			
+			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})
 
 
 
@@ -329,7 +341,7 @@ class lineasMax(APIView):
 			sesiones=Sesion.objects.filter(fechaInicio__gte=fechaInicio, fechaInicio__lte=fechaFin)
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
-		
+
 		query=Desempeno.objects.values('idAlumno', 'tipoOperacion').annotate(maxNivel=Max('nivel'))\
 		.filter(idAlumno__in=ids, idSesion__in=(sesiones)).order_by('idAlumno','tipoOperacion')
 
