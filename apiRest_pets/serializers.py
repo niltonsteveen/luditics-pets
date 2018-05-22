@@ -42,7 +42,7 @@ class DocenteSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model=Docente
-		fields=('id', 'nombre', 'contrasena', 'correo')
+		fields=('identificacion', 'nombre', 'password', 'correo','rol')
 
 class TextoSerializer(serializers.ModelSerializer):
 
@@ -71,13 +71,10 @@ class Tipo_TextoSerializer(serializers.ModelSerializer):
 class EstadisticaSerializer(serializers.ModelSerializer):
 
 	class Meta:
-<<<<<<< HEAD
 		model=Docente
 		fields=('identificacion', 'nombre', 'password', 'correo', 'rol')
-=======
 		model=Estadistica
 		fields=('id','numeroAciertos','numeroFallos', 'nivel', 'tipoOperacion','fechaReporte','sesion')
->>>>>>> f81defff5514eaf56dde653c6c6f3b05c21ed35c
 
 class PermisosSerializer(serializers.ModelSerializer):
 

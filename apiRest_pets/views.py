@@ -8,6 +8,7 @@ from .serializers import AlumnoSerializer, PermisosSerializer, TextoSerializer, 
 from django.db.models import Sum, Count, Max, Min, DateField
 from django.db.models.functions import Cast
 from datetime import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 class Alumnos(APIView):
 
@@ -48,15 +49,27 @@ class AlumnoDetail(APIView):
 
 class DocenteById(APIView):
 	def post(self, request):
-		docente=Docente.objects.get(identificacion=request.data['identificacion'])
-		if docente == None:
-			return Response(data={"error":"El docente ingresado no esta registrado"}, status=status.HTTP_400_BAD_REQUESTS)
-		else:
-			serializer=DocenteSerializer(docente, many=False)
-			if serializer.is_valid() && serializer['password']==request.data['password']:				
-				return Response(serializer.data)
-			else:
-				return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
+		try:
+			data=request.data
+			identificacion=data['identificacion']
+			password=data['password']
+			docente=Docente.objects.get(identificacion=identificacion,password=password)
+			serializer= DocenteSerializer(docente)
+			res={
+				"identificacion":serializer.data['identificacion'],
+				"nombre":serializer.data['nombre'],
+				"correo":serializer.data['correo'],
+				"rol":serializer.data['rol']
+			}
+			return Response(res, status=status.HTTP_200_OK)
+		except KeyError:
+			print('key error')
+			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
+		except ObjectDoesNotExist:
+			print('Does')
+			return Response(data={"msg": "no se encontraron datos"})
+
+
 
 class Docentes(APIView):
 
@@ -80,11 +93,7 @@ class Docentes(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-<<<<<<< HEAD
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
-=======
-			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)			
->>>>>>> f81defff5514eaf56dde653c6c6f3b05c21ed35c
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 
 class Permisos(APIView):
@@ -109,11 +118,8 @@ class Permisos(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-<<<<<<< HEAD
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
-=======
-			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)		
->>>>>>> f81defff5514eaf56dde653c6c6f3b05c21ed35c
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 
 class Grupos(APIView):
@@ -141,11 +147,8 @@ class Grupos(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-<<<<<<< HEAD
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
-=======
 			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
->>>>>>> f81defff5514eaf56dde653c6c6f3b05c21ed35c
 
 class GruposDetail(APIView):
 	def get(self, request, pk, format=None):
@@ -156,9 +159,9 @@ class GruposDetail(APIView):
 	def delete(self, request, pk, format=None):
 		grupo = Grupo.objects.filter(id=pk)
 		grupo[0].delete()
-		return Response(status=status.HTTP_204_NO_CONTENT)	
+		return Response(status=status.HTTP_204_NO_CONTENT)
 
-					
+
 
 class Configuraciones(APIView):
 
@@ -182,11 +185,8 @@ class Configuraciones(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		else:
-<<<<<<< HEAD
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUESTS)
-=======
-			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)					
->>>>>>> f81defff5514eaf56dde653c6c6f3b05c21ed35c
+			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 
 class Sesiones(APIView):
@@ -203,17 +203,7 @@ class Sesiones(APIView):
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
 			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
-"""
-	def put(self, request, format=None):
-		sesion=Sesion.objects.get(fechaInicio=request.data['fechaInicio'])
-		serializer=SesionSerializer(sesion, data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data)
-		else:
-			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
-"""
 class Estadisticas(APIView):
 
 	def get(self, request):
@@ -221,7 +211,7 @@ class Estadisticas(APIView):
 		serializer= EstadisticaSerializer(listaEstadisticas, many=True)
 		return Response(serializer.data)
 
-	def post(self, request):	
+	def post(self, request):
 		print(request.data['sesion'])
 
 		serializer=EstadisticaSerializer(data=request.data)
@@ -293,10 +283,6 @@ class Historias(APIView):
 				return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 		else:
 			return Response(data={"msg":"El texto ingresado no corresponde a una historia"})
-<<<<<<< HEAD
-
-=======
->>>>>>> f81defff5514eaf56dde653c6c6f3b05c21ed35c
 
 class HistoriasDetail(APIView):
 	def get(self, request, pk, format=None):
@@ -341,8 +327,8 @@ class SabiasQue(APIView):
 class SabiasQueDetail(APIView):
 	def get(self, request, pk, format=None):
 		print("has entrado muchacho")
-		listaTextos=Texto.objects.filter(id=pk)	
-		print(len(listaTextos))	
+		listaTextos=Texto.objects.filter(id=pk)
+		print(len(listaTextos))
 		serializer= TextoSerializer(listaTextos[0], many=False)
 		return Response(serializer.data)
 
@@ -438,15 +424,12 @@ class lineasMax(APIView):
 			sesiones=Sesion.objects.filter(fechaInicio__gte=fechaInicio, fechaInicio__lte=fechaFin)
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
-<<<<<<< HEAD
 
 		query=Desempeno.objects.values('idAlumno', 'tipoOperacion').annotate(maxNivel=Max('nivel'))\
 		.filter(idAlumno__in=ids, idSesion__in=(sesiones)).order_by('idAlumno','tipoOperacion')
-=======
-		
+
 		query=Estadistica.objects.values('sesion__idAlumno', 'tipoOperacion').annotate(maxNivel=Max('nivel'))\
 		.filter(sesion__idAlumno__in=ids, sesion__in=(sesiones)).order_by('sesion__idAlumno','tipoOperacion')
->>>>>>> f81defff5514eaf56dde653c6c6f3b05c21ed35c
 
 		result= query.annotate(sesion=Cast("sesion__fechaInicio", DateField()))
 		if not query:

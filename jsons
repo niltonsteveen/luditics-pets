@@ -1,0 +1,48 @@
+
+JUEGO1 Y JUEGO 2 BARRAS
+{
+	"idAlumno":2,
+	"fechaInicio":"2018-03-31T15:51:23-05:00",
+	"fechaFin":"2018-04-25T21:04:11-05:00",
+	"juego":"operaciones"
+}
+
+RETORNA CANTIDAD DE FALLOS Y ACIERTOS POR TIPO DE OPERACION Y NIVEL
+
+
+
+
+JUEGO1 Y JUEGO2 LINEAS
+
+{
+	"idAlumno":2,
+	"fechaInicio":"2018-03-31T15:51:23-05:00",
+	"fechaFin":"2018-04-25T21:04:11-05:00",
+	"juego":"operaciones"
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+lineasmax JUEGO1
+
+
+{
+	"idEstudiante":2,
+	"fechaInicio":"2018-03-31T15:51:23-05:00",
+	"fechaFin":"2018-04-25T21:04:11-05:00",
+	"juego":"operaciones"
+}
+
+
+
+cuenta 
+
+{
+	"grupo":"3-1",
+	"fechaInicio":"2018-03-31T15:51:23-05:00",
+	"fechaFin":"2018-04-25T21:04:11-05:00",
+	"juego":"operaciones"
+}
+
+
+

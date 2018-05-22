@@ -21,19 +21,14 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^alumnos/$', views.Alumnos.as_view()),
     url(r'^sesiones/', views.Sesiones.as_view()),
-<<<<<<< HEAD
-    url(r'^estadisticas/', views.Estadistica.as_view()),
-    url(r'^historias/', views.Histories.as_view()),
     url(r'^docentes/', views.Docentes.as_view()),
-    url(r'^docenteById/', views.DocenteById.as_view()),  
-=======
+    url(r'^docenteById/', views.DocenteById.as_view()),
     url(r'^estadisticas/', views.Estadisticas.as_view()),
     url(r'^textos/', views.Textos.as_view()),
     url(r'^historias/$', views.Historias.as_view()),
     url(r'^sabiasQue/$', views.SabiasQue.as_view()),
     url(r'^sabiasQue/(?P<pk>[0-9]+)/$', views.SabiasQueDetail.as_view()),
-    url(r'^docentes/', views.Docentes.as_view()),    
->>>>>>> f81defff5514eaf56dde653c6c6f3b05c21ed35c
+    url(r'^docentes/', views.Docentes.as_view()),
     url(r'^permisos/', views.Permisos.as_view()),
     url(r'^grupos/$', views.Grupos.as_view()),
     url(r'^configuracion/', views.Configuraciones.as_view()),

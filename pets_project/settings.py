@@ -79,6 +79,20 @@ WSGI_APPLICATION = 'pets_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
+        'NAME': 'juego',
+        'USER': 'jonathan',
+        'PASSWORD': 'kipolo',
+        'HOST': 'DESKTOP-K51338U',
+        'PORT': '',
+        'OPTIONS': {
+            'driver': 'SQL Server',
+        },
+    }
+}
+
+"""DATABASES = {
+    'default': {
+        'ENGINE': 'sql_server.pyodbc',
         'NAME': 'luditics',
         'USER': 'luditics@luditics',
         'PASSWORD': 'Lud1t1cs2018**',
@@ -88,7 +102,7 @@ DATABASES = {
             'driver': 'SQL Server',
         },
     }
-}
+}"""
 
 #'default': {
 #    'ENGINE': 'django.db.backends.mysql',
