@@ -41,4 +41,6 @@ urlpatterns = [
     url(r'^alumnos/(?P<pk>[0-9]+)/$', views.AlumnoDetail.as_view()),
     url(r'^historias/(?P<pk>[0-9]+)/$', views.HistoriasDetail.as_view()),
     url(r'^grupos/(?P<pk>\d*-*\d*_*\d*)/$', views.GruposDetail.as_view()),
+    url(r'^grafico3/', views.Grafico3.as_view()),
+    url(r'^grupos_x_profesor/', views.GruposXProfesor.as_view()),
 ]

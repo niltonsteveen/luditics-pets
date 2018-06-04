@@ -364,10 +364,43 @@ class barras(APIView):
 			idEstudiante=data['idAlumno']
 			fechaInicio=data['fechaInicio']
 			fechaFin=data['fechaFin']
+			juego=data['juego']
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
-		query=Estadistica.objects.values('tipoOperacion', 'nivel').annotate(aciertos=Sum('numeroAciertos'), fallos=Sum('numeroFallos'))\
-		.filter(sesion__idAlumno=idEstudiante, fechaReporte__gte=fechaInicio, fechaReporte__lte=fechaFin)
+		sesiones=Sesion.objects.filter(juego=juego)
+		print(data)
+		query=Estadistica.objects.values('tipoOperacion', 'nivel').annotate(aciertos=Sum('numeroAciertos'), fallos=Sum('numeroFallos'))	.filter(sesion__idAlumno=idEstudiante, fechaReporte__gte=fechaInicio, fechaReporte__lte=fechaFin,sesion__in=sesiones)
+		print(query)
+		if not query:
+			return Response(data={"msg":"no se encontraron datos"})
+		else:
+			return Response(query)
+
+class Grafico3(APIView):
+	def post(self,request):
+		try:
+			data=request.data
+			grupo=data['grupo']
+			fechaInicio=data['fechaInicio']
+			fechaFin=data['fechaFin']
+		except KeyError:
+			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
+		sesiones=Sesion.objects.filter(juego="serializacion", idAlumno__grupo=grupo)
+		query=Estadistica.objects.values('tipoOperacion').annotate(aciertos=Sum('numeroAciertos'),fallos=Sum('numeroFallos')).filter(fechaReporte__gte=fechaInicio, fechaReporte__lte=fechaFin,sesion__in=sesiones).order_by('tipoOperacion')
+		if not query:
+			return Response(data={"msg":"no se encontraron datos"})
+		else:
+			return Response(query)
+
+class GruposXProfesor(APIView):
+	def post(self,request):
+		try:
+			data=request.data
+			cedula=data['cedula']
+		except KeyError:
+			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
+		grupos=Grupo_Docente.objects.values('grupo').filter(docente=cedula)
+		query=Grupo.objects.values('id','descripcion').filter(id__in=grupos)
 		if not query:
 			return Response(data={"msg":"no se encontraron datos"})
 		else:
@@ -447,7 +480,7 @@ class cuenta(APIView):
 			estudiantes=Alumno.objects.filter(grupo=grupo)
 			fechaInicio=data['fechaInicio']
 			fechaFin=data['fechaFin']
-			sesiones=Sesion.objects.filter(fechaInicio__gte=fechaInicio, fechaInicio__lte=fechaFin)
+			sesiones=Sesion.objects.filter(fechaInicio__gte=fechaInicio, fechaInicio__lte=fechaFin, juego='operaciones')
 		except KeyError:
 			return Response(data={"msg": " Datos ingresados de manera incorrecta"})
 

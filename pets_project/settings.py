@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'pets_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
         'NAME': 'juego',
@@ -88,9 +88,9 @@ DATABASES = {
             'driver': 'SQL Server',
         },
     }
-}
+}"""
 
-"""DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'sql_server.pyodbc',
         'NAME': 'luditics',
@@ -102,7 +102,7 @@ DATABASES = {
             'driver': 'SQL Server',
         },
     }
-}"""
+}
 
 #'default': {
 #    'ENGINE': 'django.db.backends.mysql',
